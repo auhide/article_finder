@@ -22,6 +22,9 @@ class Finder:
     def __init__(self, html):
         self.html = html
 
+    def find(self):
+        pass
+
 
 
 class TagSymbFinder(Finder):
@@ -98,6 +101,5 @@ class TagSymbFinder(Finder):
             # If there are characters inside the tag
             if tag_counter[1]:
                 tag_counter_dict[tag_counter[0]] = tag_counter[1]
-
 
         return tag_counter_dict

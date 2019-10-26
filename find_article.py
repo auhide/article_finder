@@ -16,8 +16,11 @@ from meta_modules.constants import PARSER
 
 class ArticleFinder(Finder):
 
-    def __init__(self, html):
+    def __init__(self, html, skip_tags=()):
         super().__init__(html)
+        
+        self.skip_tags = skip_tags
+        self.dct = None
 
 
     def find(self):
@@ -27,17 +30,24 @@ class ArticleFinder(Finder):
 
         title = TitleFinder(self.html).find()
         
-        body_finder = BodyFinder(src=self.html)
+        body_finder = BodyFinder(src=self.html, skip_tags=self.skip_tags)
         body = body_finder.find()
-        article = title + body
+        
+        self.dct = body_finder.get_tags_dct()
 
-        cleaner = Cleaner(article)
-        cleaner.clean()
+        try:
+            article = title + body
 
-        self.article = article
-        self.__clean_article()
+            cleaner = Cleaner(article)
+            cleaner.clean()
 
-        return self.article
+            self.article = article
+            self.__clean_article()
+
+            return self.article
+
+        except TypeError:
+            return "Article BODY or TITLE wasn't found"
 
 
     def __clean_article(self):
@@ -108,10 +118,11 @@ class BodyFinder(BodyTagFinder):
     Finds the parent tag that holds the body of an article
     '''
 
-    def __init__(self, src, formatting_tags_to_skip=None):
-        super().__init__(src, formatting_tags_to_skip)
+    def __init__(self, src, formatting_tags_to_skip=None, skip_tags=()):
+        super().__init__(src, formatting_tags_to_skip, skip_tags)
         self.src = src
         self.tag = self.find_body_tag()
+        print("TAG:::", self.tag)
 
         self.soup = BeautifulSoup(src, PARSER)
 
@@ -140,7 +151,6 @@ class BodyFinder(BodyTagFinder):
         # Getting the part of the article body that is 
         # at the top of the normal one, if it exists
         try:
-
             if article_tag.previous_sibling.split():
                 prev_sibl_children_dct = self.__get_child_symbs_dct(article_tag.previous_sibling)
                 
@@ -202,11 +212,9 @@ class BodyFinder(BodyTagFinder):
 
 
 
-
-
 if __name__ == "__main__":
 
-    url = 'https://www.gob.mx/cnbv/acciones-y-programas/sociedades-financieras-populares-sociedades-financieras-comunitarias'
+    url = 'http://www.ekathimerini.com/245897/article/ekathimerini/news/erdogan-threatens-europe-with-refugee-flood-again-over-syria-safe-zone'
 
     resp = req.get(url)
     html = resp.text
@@ -216,3 +224,4 @@ if __name__ == "__main__":
 
     article = ArticleFinder(html)
     print(article.find())
+    print(article.dct)

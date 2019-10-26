@@ -19,11 +19,12 @@ class BodyTagFinder(TagSymbFinder):
     You can get the tag with the find_body_tag() method.
     '''
 
-    def __init__(self, html, formatting_tags_to_skip=None):
+    def __init__(self, html, formatting_tags_to_skip=None, skip_tags=()):
 
         super().__init__(html)
         self.src = html
-        
+        self.skip_tags = skip_tags
+
         self.dct = self.get_tags_counter(formatting_tags_to_skip)
         self.df = self.__dct_to_df()
 
@@ -49,7 +50,8 @@ class BodyTagFinder(TagSymbFinder):
         Takes a list of tags(`tags_to_rem`) and removes them from the DataFrame of the object
         '''
         
-        for tag in DF_REM_TAGS:
+
+        for tag in DF_REM_TAGS + self.skip_tags:
             try:
                 self.df = self.df[self.df['Tag'] != tag]
             except:
@@ -66,6 +68,11 @@ class BodyTagFinder(TagSymbFinder):
         # print(df)
 
         return df
+
+    
+    def get_tags_dct(self):
+
+        return self.dct
     
 
 
