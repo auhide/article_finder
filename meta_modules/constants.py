@@ -11,10 +11,10 @@ PARSER = 'lxml'
 PERCENTAGE_LIMIT = 50.0
 
 # Creating the Absolute Paths
-CSV_PATH =  'data\\tags_percent.csv'
+CSV_PATH = os.path.join('data', 'tags_percent.csv')
 CSV_PATH = os.path.join(HOME_PATH, CSV_PATH)
 
-LOG_DIR = 'output\log.log'
+LOG_DIR = os.path.join('output', 'log.log')
 LOG_DIR = os.path.join(HOME_PATH, LOG_DIR)
 
 FORMATTING_TAGS = [
