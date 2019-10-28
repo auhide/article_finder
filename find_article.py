@@ -45,8 +45,7 @@ class ArticleFinder(Finder):
         
         # Initial use of the Cleaner
         cleaner = Cleaner(self.html)
-        cleaner.clean()
-        self.html = str(cleaner)
+        self.html = str(cleaner.clean())
 
         body_finder = BodyFinder(src=self.html, skip_tags=self.skip_tags)
         body = body_finder.find()
