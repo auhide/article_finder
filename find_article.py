@@ -43,10 +43,10 @@ class ArticleFinder(Finder):
 
         try:
             if self.only_body or not title:
-                cleaner = Cleaner(body)
-                cleaner.clean(additional_tags=self.additional_tags)
+                self.article = body
+                self.__clean_article(additional_tags=self.additional_tags)
 
-                return str(cleaner)
+                return self.article
 
             article = title + body
 
