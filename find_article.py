@@ -17,12 +17,13 @@ from meta_modules.constants import PARSER
 class ArticleFinder(Finder):
 
 
-    def __init__(self, html, skip_tags=(), only_body=False):
+    def __init__(self, html, skip_tags=(), additional_tags=[], only_body=False):
         super().__init__(html)
         
         self.skip_tags = skip_tags
         self.dct = None
         self.only_body = only_body
+        self.additional_tags = additional_tags
 
 
     def find(self):
@@ -43,17 +44,14 @@ class ArticleFinder(Finder):
         try:
             if self.only_body or not title:
                 cleaner = Cleaner(body)
-                cleaner.clean()
+                cleaner.clean(additional_tags=self.additional_tags)
 
                 return str(cleaner)
 
             article = title + body
 
-            cleaner = Cleaner(article)
-            cleaner.clean()
-
             self.article = article
-            self.__clean_article()
+            self.__clean_article(additional_tags=self.additional_tags)
 
             return self.article
 
@@ -61,7 +59,7 @@ class ArticleFinder(Finder):
             return "Article BODY or TITLE wasn't found"
 
 
-    def __clean_article(self):
+    def __clean_article(self, additional_tags=[]):
         '''
         Removes the <a> tag, while leaving the text in it.
         Uses the meta_modules/cleaner.py module to clean it afterwards.
@@ -73,7 +71,7 @@ class ArticleFinder(Finder):
                               string=self.article)
 
         cleaner = Cleaner(self.article)
-        self.article = cleaner.clean()
+        self.article = cleaner.clean(additional_tags=additional_tags)
 
 
 
@@ -231,7 +229,7 @@ class BodyFinder(BodyTagFinder):
 
 if __name__ == "__main__":
 
-    url = 'https://www.vg.hu/gazdasag/gazdasagpolitika/bonyolultabba-valhatnak-az-unios-agrarkifizetesek-1149332/'
+    url = 'https://www.rt.com/news/472020-okinawa-us-marines-arrested-japan/'
 
     resp = req.get(url)
     html = resp.text
@@ -239,6 +237,6 @@ if __name__ == "__main__":
     # cleaner = Cleaner(html)
     # cleaner.clean()
 
-    article = ArticleFinder(html, skip_tags=('div',))
+    article = ArticleFinder(html, skip_tags=('div',), additional_tags=['span'])
     print(article.find())
     print(article.dct)
