@@ -89,6 +89,7 @@ class TitleFinder(Finder):
         '''
 
         meta_tag = 'meta'
+        title = 'title'
         property = 'og:title'
         content = 'content'
         title_tag = 'title'
@@ -96,10 +97,16 @@ class TitleFinder(Finder):
         try:
             soup = BeautifulSoup(html, PARSER)
 
-            # Finding the <meta> tag containing the title
-            meta_found = soup.find(meta_tag, property=property)
-            # Getting the matches of the title in the whole html
-            matches = re.findall(meta_found[content], self.html)
+            try:
+                # Finding the <meta> tag containing the title
+                meta_found = soup.find(meta_tag, property=property)
+
+                # Getting the matches of the title in the whole html
+                matches = re.findall(meta_found[content], self.html)
+            # If the title is not in a <meta> tag with the property='og:title'
+            except TypeError:
+                meta_found = soup.find(title)
+                return f'<h1 class="auto-title">{meta_found.text}</h1>'
 
             # Removing all matches that are greater or equal to the title in <meta>
             for match in matches:
@@ -110,14 +117,14 @@ class TitleFinder(Finder):
             if len(matches):
                 title = max(matches)
                 title = title.strip()
-                title = f"<h1>{title}</h1>"
+                title = f'<h1 class="auto-title">{title}</h1>'
 
                 return title
             
             # Else - return the title from the <meta> tag 
-            return f"<h1>{meta_found[content]}</h1>"
+            return f'<h1 class="auto-title">{meta_found[content]}</h1'
 
-        except Exception:
+        except TypeError:
             print("This website doesn't have the title in the meta tags.")
 
         return None
