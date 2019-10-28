@@ -32,11 +32,6 @@ class ArticleFinder(Finder):
         self.only_body = only_body
         self.clean_tags = clean_tags
 
-        # Initial use of the Cleaner
-        cleaner = Cleaner(self.html)
-        cleaner.clean()
-        self.html = str(cleaner)
-
 
     def find(self):
         '''
@@ -48,6 +43,11 @@ class ArticleFinder(Finder):
 
         title = TitleFinder(self.html).find()
         
+        # Initial use of the Cleaner
+        cleaner = Cleaner(self.html)
+        cleaner.clean()
+        self.html = str(cleaner)
+
         body_finder = BodyFinder(src=self.html, skip_tags=self.skip_tags)
         body = body_finder.find()
         
