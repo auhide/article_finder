@@ -47,7 +47,7 @@ class ArticleFinder(Finder):
         cleaner = Cleaner(self.html)
         self.html = str(cleaner.clean())
 
-        body_finder = BodyFinder(src=self.html, skip_tags=self.skip_tags)
+        body_finder = BodyFinder(html=self.html, skip_tags=self.skip_tags)
         body = body_finder.find()
         
         self.dct = body_finder.get_tags_dct()
@@ -142,15 +142,15 @@ class TitleFinder(Finder):
 class BodyFinder(BodyTagFinder):
     '''
     Finds the parent tag that holds the body of an article
+
     '''
 
-    def __init__(self, src, formatting_tags_to_skip=None, skip_tags=()):
-        super().__init__(src, formatting_tags_to_skip, skip_tags)
-        self.src = src
+    def __init__(self, html, formatting_tags_to_skip=None, skip_tags=()):
+        super().__init__(html, formatting_tags_to_skip, skip_tags)
         self.tag = self.find_body_tag()
         print("TAG:::", self.tag)
 
-        self.soup = BeautifulSoup(src, PARSER)
+        self.soup = BeautifulSoup(html, PARSER)
 
 
     def find(self):
@@ -239,7 +239,7 @@ class BodyFinder(BodyTagFinder):
 
 if __name__ == "__main__":
 
-    url = 'http://www.milliyet.com.tr/gundem/batmanda-servis-minibusu-devrildi-1-olu-10-yarali-6066459'
+    url = 'http://www.milliyet.com.tr/dunya/trumptan-flas-bagdadi-aciklamasi-videolarini-yayimlamayi-dusunuyoruz-6066862'
 
     resp = req.get(url)
     html = resp.text
