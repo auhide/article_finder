@@ -3,13 +3,13 @@ import sys
 import re
 
 import requests
+import math
 
 from bs4 import BeautifulSoup
 import pandas as pd
 import numpy as np
 
 from meta_modules.constants import *
-
 
 
 class Cleaner:
@@ -53,7 +53,6 @@ class Cleaner:
 
 
 
-
     def __csv_tags_stats(self):
         '''
         Creates a DataFrame out of the Excel file in the data/ directory.
@@ -63,7 +62,7 @@ class Cleaner:
         # Filtering the tags by percentage
         # Ordering the tags from the CSV file in descending order
         df = pd.read_csv(CSV_PATH, error_bad_lines=False)
-        df = df[df["Percent"] > PERCENTAGE_LIMIT].sort_values(by=["Percent"], 
+        df = df[df["Percent"] == KEEP_TAG].sort_values(by=["Percent"],
                                                               ascending=False)
 
         # Making a list out of all remaining tags
@@ -112,7 +111,6 @@ class Cleaner:
                                  string=curr_string,
                                  flags=re.MULTILINE)
         
-
         self.soup = BeautifulSoup(curr_string, PARSER)
 
 
@@ -214,6 +212,10 @@ class Cleaner:
     def __str__(self):
 
         return str(self.soup)
+
+
+
+
 
 
 if __name__ == "__main__":

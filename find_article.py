@@ -19,14 +19,14 @@ class ArticleFinder(Finder):
     Class that automatically finds the TITLE and BODY of an article.
 
     `html`          - the HTML source code\n
-    `skip_tags`     - tags to be skipped while counting the symbols inside the whole HTML\n
+    `skip_tags`     - tags to be skipped while counting the symbols inside the tags in the whole HTML\n
     `clean_tags`    - tags to be cleaned as a final filter (as an argument in Cleaner())\n
     `only_body`     - True if you want to only get the BODY; default value - False
     '''
 
     def __init__(self, html, skip_tags=(), clean_tags=[], only_body=False):
         super().__init__(html)
-        
+
         self.skip_tags = skip_tags
         self.dct = None
         self.only_body = only_body
@@ -97,7 +97,6 @@ class TitleFinder(Finder):
         title = 'title'
         property = 'og:title'
         content = 'content'
-        title_tag = 'title'
 
         try:
             soup = BeautifulSoup(html, PARSER)
@@ -236,7 +235,7 @@ class BodyFinder(BodyTagFinder):
 
 if __name__ == "__main__":
 
-    url = 'https://sports.ndtv.com/cricket/virender-sehwag-says-one-prediction-on-sourav-ganguly-came-true-one-more-to-go-2123567?pfrom=home-topstories'
+    url = 'http://weeklyworldnews.com/headlines/175536/taylor-swift-holds-fundraiser-for-bat-boy/'
 
     resp = req.get(url)
     html = resp.text
@@ -244,6 +243,6 @@ if __name__ == "__main__":
     # cleaner = Cleaner(html)
     # cleaner.clean()
 
-    article = ArticleFinder(html, skip_tags=('span',), clean_tags=['span'])
+    article = ArticleFinder(html, skip_tags=('span',))
     print(article.find())
     print(article.dct)
