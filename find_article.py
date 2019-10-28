@@ -15,7 +15,14 @@ from meta_modules.constants import PARSER
 
 
 class ArticleFinder(Finder):
+    '''
+    Class that automatically finds the TITLE and BODY of an article.
 
+    `html`          - the HTML source code\n
+    `skip_tags`     - tags to be skipped while counting the symbols inside the whole HTML\n
+    `clean_tags`    - tags to be cleaned as a final filter (as an argument in Cleaner())\n
+    `only_body`     - True if you want to only get the BODY; default value - False
+    '''
 
     def __init__(self, html, skip_tags=(), clean_tags=[], only_body=False):
         super().__init__(html)
@@ -201,7 +208,7 @@ class BodyFinder(BodyTagFinder):
         '''
         Returns a dictionary - child of `parent_soup` => symbols
 
-        We don't count surrounding whitespace as symbols.
+        Surrounding whitespace is not counter as symbols.
         '''
 
         tags = self.__get_tags(parent_soup)
@@ -229,7 +236,7 @@ class BodyFinder(BodyTagFinder):
 
 if __name__ == "__main__":
 
-    url = 'https://www.rt.com/news/472020-okinawa-us-marines-arrested-japan/'
+    url = 'https://sports.ndtv.com/cricket/virender-sehwag-says-one-prediction-on-sourav-ganguly-came-true-one-more-to-go-2123567?pfrom=home-topstories'
 
     resp = req.get(url)
     html = resp.text
@@ -237,6 +244,6 @@ if __name__ == "__main__":
     # cleaner = Cleaner(html)
     # cleaner.clean()
 
-    article = ArticleFinder(html)
+    article = ArticleFinder(html, skip_tags=('span',), clean_tags=['span'])
     print(article.find())
     print(article.dct)
