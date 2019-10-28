@@ -16,11 +16,12 @@ from meta_modules.constants import PARSER
 
 class ArticleFinder(Finder):
 
-    def __init__(self, html, skip_tags=()):
+    def __init__(self, html, skip_tags=(), only_body=False):
         super().__init__(html)
         
         self.skip_tags = skip_tags
         self.dct = None
+        self.only_body = only_body
 
 
     def find(self):
@@ -36,6 +37,12 @@ class ArticleFinder(Finder):
         self.dct = body_finder.get_tags_dct()
 
         try:
+            if self.only_body:
+                cleaner = Cleaner(article)
+                cleaner.clean()
+
+                return body
+
             article = title + body
 
             cleaner = Cleaner(article)
@@ -214,7 +221,7 @@ class BodyFinder(BodyTagFinder):
 
 if __name__ == "__main__":
 
-    url = 'http://www.ekathimerini.com/245897/article/ekathimerini/news/erdogan-threatens-europe-with-refugee-flood-again-over-syria-safe-zone'
+    url = 'https://www.zf.ro/zf-20-de-ani/zf-la-20-de-ani-evenimentul-anului-2012-proiectul-autostrazii-bechtel-un-esec-de-1-4-mld-euro-infrastructura-azi-in-romania-un-esec-de-zeci-de-miliarde-de-euro-anual-17622664'
 
     resp = req.get(url)
     html = resp.text

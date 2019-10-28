@@ -43,10 +43,10 @@ class TagSymbFinder(Finder):
         Matches all text using Regex, for the `tag` attribute
         '''
         
-        get_tag_text = f"<({tag})(?:[^>]+)?>([^<]+)<\/{tag}>"
+        re_get_tag_text = f"<({tag})(?:[^>]+)?>([^<]+)<\/{tag}>"
 
         # List of matched tuples(1st group - TAG, 2nd group - SYMBOLS)
-        tag_count = re.findall(get_tag_text, html)
+        tag_count = re.findall(re_get_tag_text, html, flags=re.IGNORECASE)
 
         tag_counter = 0
 
