@@ -32,6 +32,11 @@ class ArticleFinder(Finder):
         self.only_body = only_body
         self.clean_tags = clean_tags
 
+        # Initial use of the Cleaner
+        cleaner = Cleaner(self.html)
+        cleaner.clean()
+        self.html = str(cleaner)
+
 
     def find(self):
         '''
@@ -235,7 +240,7 @@ class BodyFinder(BodyTagFinder):
 
 if __name__ == "__main__":
 
-    url = 'http://weeklyworldnews.com/headlines/175536/taylor-swift-holds-fundraiser-for-bat-boy/'
+    url = 'http://www.milliyet.com.tr/gundem/batmanda-servis-minibusu-devrildi-1-olu-10-yarali-6066459'
 
     resp = req.get(url)
     html = resp.text
@@ -243,6 +248,6 @@ if __name__ == "__main__":
     # cleaner = Cleaner(html)
     # cleaner.clean()
 
-    article = ArticleFinder(html, skip_tags=('span',))
+    article = ArticleFinder(html, skip_tags=('span', 'h3', 'h4'))
     print(article.find())
     print(article.dct)
