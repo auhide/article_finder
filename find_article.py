@@ -16,6 +16,7 @@ from meta_modules.constants import PARSER
 
 class ArticleFinder(Finder):
 
+
     def __init__(self, html, skip_tags=(), only_body=False):
         super().__init__(html)
         
@@ -26,7 +27,10 @@ class ArticleFinder(Finder):
 
     def find(self):
         '''
-        Finds the full article, with its TITLE and BODY
+        Returns a string.
+
+        Finds the full article, with either its TITLE and BODY
+        or only BODY.
         '''
 
         title = TitleFinder(self.html).find()
@@ -37,11 +41,11 @@ class ArticleFinder(Finder):
         self.dct = body_finder.get_tags_dct()
 
         try:
-            if self.only_body:
-                cleaner = Cleaner(article)
+            if self.only_body or not title:
+                cleaner = Cleaner(body)
                 cleaner.clean()
 
-                return body
+                return str(cleaner)
 
             article = title + body
 
@@ -188,7 +192,6 @@ class BodyFinder(BodyTagFinder):
         return tag_set
 
 
-
     def __get_child_symbs_dct(self, parent_soup):
         '''
         Returns a dictionary - child of `parent_soup` => symbols
@@ -221,7 +224,7 @@ class BodyFinder(BodyTagFinder):
 
 if __name__ == "__main__":
 
-    url = 'https://www.zf.ro/zf-20-de-ani/zf-la-20-de-ani-evenimentul-anului-2012-proiectul-autostrazii-bechtel-un-esec-de-1-4-mld-euro-infrastructura-azi-in-romania-un-esec-de-zeci-de-miliarde-de-euro-anual-17622664'
+    url = 'https://www.vg.hu/gazdasag/gazdasagpolitika/bonyolultabba-valhatnak-az-unios-agrarkifizetesek-1149332/'
 
     resp = req.get(url)
     html = resp.text
@@ -229,6 +232,6 @@ if __name__ == "__main__":
     # cleaner = Cleaner(html)
     # cleaner.clean()
 
-    article = ArticleFinder(html)
+    article = ArticleFinder(html, skip_tags=('div',))
     print(article.find())
     print(article.dct)
