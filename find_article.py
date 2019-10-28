@@ -17,13 +17,13 @@ from meta_modules.constants import PARSER
 class ArticleFinder(Finder):
 
 
-    def __init__(self, html, skip_tags=(), additional_tags=[], only_body=False):
+    def __init__(self, html, skip_tags=(), clean_tags=[], only_body=False):
         super().__init__(html)
         
         self.skip_tags = skip_tags
         self.dct = None
         self.only_body = only_body
-        self.additional_tags = additional_tags
+        self.clean_tags = clean_tags
 
 
     def find(self):
@@ -44,14 +44,14 @@ class ArticleFinder(Finder):
         try:
             if self.only_body or not title:
                 self.article = body
-                self.__clean_article(additional_tags=self.additional_tags)
+                self.__clean_article(clean_tags=self.clean_tags)
 
                 return self.article
 
             article = title + body
 
             self.article = article
-            self.__clean_article(additional_tags=self.additional_tags)
+            self.__clean_article(clean_tags=self.clean_tags)
 
             return self.article
 
@@ -59,7 +59,7 @@ class ArticleFinder(Finder):
             return "Article BODY or TITLE wasn't found"
 
 
-    def __clean_article(self, additional_tags=[]):
+    def __clean_article(self, clean_tags=[]):
         '''
         Removes the <a> tag, while leaving the text in it.
         Uses the meta_modules/cleaner.py module to clean it afterwards.
@@ -71,7 +71,7 @@ class ArticleFinder(Finder):
                               string=self.article)
 
         cleaner = Cleaner(self.article)
-        self.article = cleaner.clean(additional_tags=additional_tags)
+        self.article = cleaner.clean(additional_tags=clean_tags)
 
 
 
@@ -237,6 +237,6 @@ if __name__ == "__main__":
     # cleaner = Cleaner(html)
     # cleaner.clean()
 
-    article = ArticleFinder(html, skip_tags=('div',), additional_tags=['span'])
+    article = ArticleFinder(html)
     print(article.find())
     print(article.dct)
