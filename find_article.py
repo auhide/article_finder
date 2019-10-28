@@ -143,6 +143,8 @@ class BodyFinder(BodyTagFinder):
     '''
     Finds the parent tag that holds the body of an article
 
+    `formatting_tags_to_skip` - skip NOT counting the symbols inside of formatting tags such as - <i>, etc...\n
+    `skip_tags` - tags to be skipped while counting the symbols inside the tags in the whole HTML\n
     '''
 
     def __init__(self, html, formatting_tags_to_skip=None, skip_tags=()):
