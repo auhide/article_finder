@@ -28,5 +28,7 @@ Parameters:
 ```
 
 Attributes:
+```
 article_object.dct - Dictionary - dictionary with keys representing the tags, and values representing 
 the corresponding count of symbols for each tag
+```
