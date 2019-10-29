@@ -11,7 +11,7 @@ pip install -r requirements.txt
 ### How to use it
 
 ```python
-from article_finder import ArticleFinder
+from find_article import ArticleFinder
 
 article_finder = ArticleFinder(html=your_html)
 article = article_finder.find()
