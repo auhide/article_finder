@@ -3,8 +3,7 @@
 Package that finds the article TITLE and BODY, automatically
 
 ## Getting Started
-
-Install required packages:
+### Install required packages:
 ```
 pip install -r requirements.txt
 ```
