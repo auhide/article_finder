@@ -143,8 +143,8 @@ class BodyFinder(BodyTagFinder):
     '''
     Finds the parent tag that holds the body of an article
 
-    `formatting_tags_to_skip` - skip NOT counting the symbols inside of formatting tags such as - <i>, etc...\n
-    `skip_tags` - tags to be skipped while counting the symbols inside the tags in the whole HTML\n
+    `formatting_tags_to_skip`   - DO NOT skip counting the symbols inside of formatting tags such as - <i>, etc...\n
+    `skip_tags`                 - tags to be skipped while counting the symbols inside the tags in the whole HTML\n
     '''
 
     def __init__(self, html, formatting_tags_to_skip=None, skip_tags=()):
@@ -241,7 +241,7 @@ class BodyFinder(BodyTagFinder):
 
 if __name__ == "__main__":
 
-    url = 'http://www.milliyet.com.tr/dunya/trumptan-flas-bagdadi-aciklamasi-videolarini-yayimlamayi-dusunuyoruz-6066862'
+    url = 'https://www.vg.hu/gazdasag/gazdasagi-hirek/ketmilliard-dollar-a-fenntarthato-gazdasagert-1825578/'
 
     resp = req.get(url)
     html = resp.text
@@ -249,6 +249,6 @@ if __name__ == "__main__":
     # cleaner = Cleaner(html)
     # cleaner.clean()
 
-    article = ArticleFinder(html, skip_tags=('span', 'h3', 'h4'))
+    article = ArticleFinder(html, skip_tags=('div',))
     print(article.find())
     print(article.dct)
