@@ -25,7 +25,7 @@ class ArticleFinder(Finder):
     `anchor_text`   - Boolean - False if you want to get the text WITH the anchor tag; default value - True
     '''
 
-    def __init__(self, html, skip_tags=(), clean_tags=(), only_body=False, anchor_text=True):
+    def __init__(self, html, skip_tags=(), clean_tags=(), only_body=False, anchor_text=True, init_clean=True):
         super().__init__(html)
 
         self.skip_tags = skip_tags
@@ -33,6 +33,7 @@ class ArticleFinder(Finder):
         self.only_body = only_body
         self.clean_tags = clean_tags
         self.anchor_text = anchor_text
+        self.init_clean = init_clean
 
 
     def find(self):
@@ -44,10 +45,11 @@ class ArticleFinder(Finder):
         '''
 
         title = TitleFinder(self.html).find()
-        
+
         # Initial use of the Cleaner
-        cleaner = Cleaner(self.html)
-        self.html = str(cleaner.clean())
+        if self.init_clean:
+            cleaner = Cleaner(self.html)
+            self.html = str(cleaner.clean())
 
         body_finder = BodyFinder(html=self.html, skip_tags=self.skip_tags)
         body = body_finder.find()
@@ -243,7 +245,7 @@ class BodyFinder(BodyTagFinder):
 
 if __name__ == "__main__":
 
-    url = 'https://ultimosegundo.ig.com.br/politica/2019-10-30/carlos-rebate-pai-jair-e-diz-que-nao-publicou-video-de-hienas-ele-mesmo-o-fez.html'
+    url = 'http://www.philenews.com/koinonia/eidiseis/article/809830/gsy-maziki-entaxi-gatron-anatrepei-tin-arnitiki-eikona'
 
     resp = req.get(url)
     html = resp.text
@@ -251,6 +253,6 @@ if __name__ == "__main__":
     # cleaner = Cleaner(html)
     # cleaner.clean()
 
-    article = ArticleFinder(html=html, skip_tags=(), clean_tags=())
+    article = ArticleFinder(html=html, skip_tags=(), clean_tags=(), init_clean=False)
     print(article.find())
     print(article.dct)
