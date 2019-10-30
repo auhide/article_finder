@@ -23,6 +23,7 @@ class ArticleFinder(Finder):
     `clean_tags`    - Tuple - tags to be cleaned as a final filter (as an argument in Cleaner())\n
     `only_body`     - Boolean - True if you want to only get the BODY; default value - False\n
     `anchor_text`   - Boolean - False if you want to get the text WITH the anchor tag; default value - True
+    `init_clean`    - Boolean - False for when you don't want to use the Cleaner before the Finder; default value - True
     '''
 
     def __init__(self, html, skip_tags=(), clean_tags=(), only_body=False, anchor_text=True, init_clean=True):
@@ -245,7 +246,7 @@ class BodyFinder(BodyTagFinder):
 
 if __name__ == "__main__":
 
-    url = 'http://www.philenews.com/koinonia/eidiseis/article/809830/gsy-maziki-entaxi-gatron-anatrepei-tin-arnitiki-eikona'
+    url = 'https://jc.ne10.uol.com.br/blogs/blogdofera/2019/10/30/como-tirar-nota-mil-na-redacao-do-enem/'
 
     resp = req.get(url)
     html = resp.text
@@ -253,6 +254,6 @@ if __name__ == "__main__":
     # cleaner = Cleaner(html)
     # cleaner.clean()
 
-    article = ArticleFinder(html=html, skip_tags=(), clean_tags=(), init_clean=False)
+    article = ArticleFinder(html=html, skip_tags=(), clean_tags=())
     print(article.find())
     print(article.dct)
