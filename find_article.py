@@ -18,19 +18,21 @@ class ArticleFinder(Finder):
     '''
     Class that automatically finds the TITLE and BODY of an article.
 
-    `html`          - the HTML source code\n
-    `skip_tags`     - tags to be skipped while counting the symbols inside the tags in the whole HTML\n
-    `clean_tags`    - tags to be cleaned as a final filter (as an argument in Cleaner())\n
-    `only_body`     - True if you want to only get the BODY; default value - False
+    `html`          - String - the HTML source code\n
+    `skip_tags`     - Tuple -tags to be skipped while counting the symbols inside the tags in the whole HTML\n
+    `clean_tags`    - Tuple - tags to be cleaned as a final filter (as an argument in Cleaner())\n
+    `only_body`     - Boolean - True if you want to only get the BODY; default value - False
+    `anchor_text`   - Boolean - False if you want to get the text WITH the anchor tag; default value - True
     '''
 
-    def __init__(self, html, skip_tags=(), clean_tags=[], only_body=False):
+    def __init__(self, html, skip_tags=(), clean_tags=(), only_body=False, anchor_text=True):
         super().__init__(html)
 
         self.skip_tags = skip_tags
         self.dct = None
         self.only_body = only_body
         self.clean_tags = clean_tags
+        self.anchor_text = anchor_text
 
 
     def find(self):
@@ -55,14 +57,16 @@ class ArticleFinder(Finder):
         try:
             if self.only_body or not title:
                 self.article = body
-                self.__clean_article(clean_tags=self.clean_tags)
+                if self.anchor_text:
+                    self.__clean_article(clean_tags=self.clean_tags)
 
                 return self.article
 
             article = title + body
-
             self.article = article
-            self.__clean_article(clean_tags=self.clean_tags)
+
+            if self.anchor_text:
+                self.__clean_article(clean_tags=self.clean_tags)
 
             return self.article
 
@@ -70,7 +74,7 @@ class ArticleFinder(Finder):
             return "Article BODY or TITLE wasn't found"
 
 
-    def __clean_article(self, clean_tags=[]):
+    def __clean_article(self, clean_tags=()):
         '''
         Removes the <a> tag, while leaving the text in it.
         Uses the meta_modules/cleaner.py module to clean it afterwards.
@@ -143,8 +147,8 @@ class BodyFinder(BodyTagFinder):
     '''
     Finds the parent tag that holds the body of an article
 
-    `formatting_tags_to_skip`   - DO NOT skip counting the symbols inside of formatting tags such as - <i>, etc...\n
-    `skip_tags`                 - tags to be skipped while counting the symbols inside the tags in the whole HTML\n
+    `formatting_tags_to_skip`   - List - DO NOT skip counting the symbols inside of formatting tags such as - <i>, etc...\n
+    `skip_tags`                 - Tuple - tags to be skipped while counting the symbols inside the tags in the whole HTML\n
     '''
 
     def __init__(self, html, formatting_tags_to_skip=None, skip_tags=()):
@@ -241,7 +245,7 @@ class BodyFinder(BodyTagFinder):
 
 if __name__ == "__main__":
 
-    url = 'https://www.vg.hu/gazdasag/gazdasagi-hirek/ketmilliard-dollar-a-fenntarthato-gazdasagert-1825578/'
+    url = 'https://www.pulzo.com/deportes/clasificados-cuadrangulares-liga-aguila-2019-2-PP792653'
 
     resp = req.get(url)
     html = resp.text
@@ -249,6 +253,6 @@ if __name__ == "__main__":
     # cleaner = Cleaner(html)
     # cleaner.clean()
 
-    article = ArticleFinder(html, skip_tags=('div',))
+    article = ArticleFinder(html=html, skip_tags=(), clean_tags=(), anchor_text=False)
     print(article.find())
     print(article.dct)

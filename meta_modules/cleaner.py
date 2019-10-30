@@ -154,7 +154,7 @@ class Cleaner:
 
 
 
-    def clean(self, additional_tags=None, skip_tags=[]):
+    def clean(self, additional_tags=None, skip_tags=()):
         '''
         Removes all unneeded tags.
         '''
