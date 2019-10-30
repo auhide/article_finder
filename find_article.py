@@ -78,7 +78,7 @@ class ArticleFinder(Finder):
         '''
 
         # Removing the <a> tag, but leaving out the text in it
-        if anchor_text:
+        if self.anchor_text:
             self.article = re.sub(pattern='(?:<a[^<]+>)|(?:<\s*\/a\s*>)',
                                   repl='',
                                   string=self.article)
