@@ -21,7 +21,7 @@ class ArticleFinder(Finder):
     `html`          - String - the HTML source code\n
     `skip_tags`     - Tuple -tags to be skipped while counting the symbols inside the tags in the whole HTML\n
     `clean_tags`    - Tuple - tags to be cleaned as a final filter (as an argument in Cleaner())\n
-    `only_body`     - Boolean - True if you want to only get the BODY; default value - False
+    `only_body`     - Boolean - True if you want to only get the BODY; default value - False\n
     `anchor_text`   - Boolean - False if you want to get the text WITH the anchor tag; default value - True
     '''
 
@@ -105,7 +105,7 @@ class TitleFinder(Finder):
         content = 'content'
 
         try:
-            soup = BeautifulSoup(html, PARSER)
+            soup = BeautifulSoup(self.html, PARSER)
 
             try:
                 # Finding the <meta> tag containing the title
@@ -243,7 +243,7 @@ class BodyFinder(BodyTagFinder):
 
 if __name__ == "__main__":
 
-    url = 'http://zonacero.com/generales/biblia-en-mano-sicario-asesino-un-hombre-en-parqueadero-cerca-la-universidad-del-magdalena'
+    url = 'https://ultimosegundo.ig.com.br/politica/2019-10-30/carlos-rebate-pai-jair-e-diz-que-nao-publicou-video-de-hienas-ele-mesmo-o-fez.html'
 
     resp = req.get(url)
     html = resp.text
