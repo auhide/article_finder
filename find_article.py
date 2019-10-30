@@ -57,16 +57,13 @@ class ArticleFinder(Finder):
         try:
             if self.only_body or not title:
                 self.article = body
-                if self.anchor_text:
-                    self.__clean_article(clean_tags=self.clean_tags)
+                self.__clean_article(clean_tags=self.clean_tags)
 
                 return self.article
 
             article = title + body
             self.article = article
-
-            if self.anchor_text:
-                self.__clean_article(clean_tags=self.clean_tags)
+            self.__clean_article(clean_tags=self.clean_tags)
 
             return self.article
 
@@ -81,9 +78,10 @@ class ArticleFinder(Finder):
         '''
 
         # Removing the <a> tag, but leaving out the text in it
-        self.article = re.sub(pattern='(?:<a[^<]+>)|(?:<\s*\/a\s*>)',
-                              repl='',
-                              string=self.article)
+        if anchor_text:
+            self.article = re.sub(pattern='(?:<a[^<]+>)|(?:<\s*\/a\s*>)',
+                                  repl='',
+                                  string=self.article)
 
         cleaner = Cleaner(self.article)
         self.article = cleaner.clean(additional_tags=clean_tags)
@@ -245,7 +243,7 @@ class BodyFinder(BodyTagFinder):
 
 if __name__ == "__main__":
 
-    url = 'https://www.pulzo.com/deportes/clasificados-cuadrangulares-liga-aguila-2019-2-PP792653'
+    url = 'http://zonacero.com/generales/biblia-en-mano-sicario-asesino-un-hombre-en-parqueadero-cerca-la-universidad-del-magdalena'
 
     resp = req.get(url)
     html = resp.text
@@ -253,6 +251,6 @@ if __name__ == "__main__":
     # cleaner = Cleaner(html)
     # cleaner.clean()
 
-    article = ArticleFinder(html=html, skip_tags=(), clean_tags=(), anchor_text=False)
+    article = ArticleFinder(html=html, skip_tags=(), clean_tags=())
     print(article.find())
     print(article.dct)
