@@ -1,6 +1,6 @@
 # Article Finder
 
-Package that finds the article TITLE and BODY, automatically
+Package that finds article's TITLE and BODY, automatically
 
 ## Getting Started
 ### Install required packages
