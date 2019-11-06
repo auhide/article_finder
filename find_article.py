@@ -1,5 +1,5 @@
 '''
-Module that finds the article body
+Module that finds the article TITLE and BODY
 '''
 
 import requests as req
