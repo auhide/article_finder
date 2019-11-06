@@ -19,8 +19,8 @@ class ArticleFinder(Finder):
     Class that automatically finds the TITLE and BODY of an article.
 
     `html`          - String - the HTML source code\n
-    `skip_tags`     - Tuple -tags to be skipped while counting the symbols inside the tags in the whole HTML\n
-    `clean_tags`    - Tuple - tags to be cleaned as a final filter (as an argument in Cleaner())\n
+    `skip_tags`     - List -tags to be skipped while counting the symbols inside the tags in the whole HTML\n
+    `clean_tags`    - List - tags to be cleaned as a final filter (as an argument in Cleaner())\n
     `only_body`     - Boolean - True if you want to only get the BODY; default value - False\n
     `anchor_text`   - Boolean - False if you want to get the text WITH the anchor tag; default value - True
     `init_clean`    - Boolean - False for when you don't want to use the Cleaner before the Finder; default value - True
@@ -149,10 +149,10 @@ class BodyFinder(BodyTagFinder):
     Finds the parent tag that holds the body of an article
 
     `formatting_tags_to_skip`   - List - DO NOT skip counting the symbols inside of formatting tags such as - <i>, etc...\n
-    `skip_tags`                 - Tuple - tags to be skipped while counting the symbols inside the tags in the whole HTML\n
+    `skip_tags`                 - List - tags to be skipped while counting the symbols inside the tags in the whole HTML\n
     '''
 
-    def __init__(self, html, formatting_tags_to_skip=None, skip_tags=()):
+    def __init__(self, html, formatting_tags_to_skip=None, skip_tags=[]):
         super().__init__(html, formatting_tags_to_skip, skip_tags)
         self.tag = self.find_body_tag()
         print("TAG:::", self.tag)
@@ -245,11 +245,11 @@ class BodyFinder(BodyTagFinder):
 
 if __name__ == "__main__":
 
-    url = ''
+    url = 'http://www.portalspozywczy.pl/owoce-warzywa/wiadomosci/michal-czerwinski-prezes-purella-superfoods-zaprasza-na-frsih-2019-wideo,176813.html'
 
     resp = req.get(url)
     html = resp.text
 
-    article = ArticleFinder(html=html, skip_tags=[], clean_tags=[], init_clean=True)
+    article = ArticleFinder(html=html, skip_tags=['h3'], clean_tags=[], init_clean=True)
     print(article.find())
     print(article.dct)
