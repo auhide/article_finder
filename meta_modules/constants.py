@@ -28,8 +28,8 @@ FORMATTING_TAGS = (
         'sup',
 )
 
-DF_REM_TAGS = (
+DF_REM_TAGS = [
         'script',
         'a',
         'style',
-)
+]

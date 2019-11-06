@@ -19,7 +19,7 @@ class BodyTagFinder(TagSymbFinder):
     You can get the tag with the find_body_tag() method.
     '''
 
-    def __init__(self, html, formatting_tags_to_skip=None, skip_tags=()):
+    def __init__(self, html, formatting_tags_to_skip=None, skip_tags=[]):
 
         super().__init__(html)
         self.src = html

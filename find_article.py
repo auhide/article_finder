@@ -26,7 +26,7 @@ class ArticleFinder(Finder):
     `init_clean`    - Boolean - False for when you don't want to use the Cleaner before the Finder; default value - True
     '''
 
-    def __init__(self, html, skip_tags=(), clean_tags=(), only_body=False, anchor_text=True, init_clean=True):
+    def __init__(self, html, skip_tags=[], clean_tags=[], only_body=False, anchor_text=True, init_clean=True):
         super().__init__(html)
 
         self.skip_tags = skip_tags
@@ -74,7 +74,7 @@ class ArticleFinder(Finder):
             return "Article BODY or TITLE wasn't found"
 
 
-    def __clean_article(self, clean_tags=()):
+    def __clean_article(self, clean_tags=[]):
         '''
         Removes the <a> tag, while leaving the text in it.
         Uses the meta_modules/cleaner.py module to clean it afterwards.
@@ -237,7 +237,6 @@ class BodyFinder(BodyTagFinder):
                 except (AttributeError, TypeError):
                     pass
 
-                # child_symbs_dct[tag] = len(curr_text)
             child_symbs_dct[tag] = symb_count
 
         return child_symbs_dct
@@ -246,14 +245,11 @@ class BodyFinder(BodyTagFinder):
 
 if __name__ == "__main__":
 
-    url = 'https://jc.ne10.uol.com.br/blogs/blogdofera/2019/10/30/como-tirar-nota-mil-na-redacao-do-enem/'
+    url = ''
 
     resp = req.get(url)
     html = resp.text
 
-    # cleaner = Cleaner(html)
-    # cleaner.clean()
-
-    article = ArticleFinder(html=html, skip_tags=(), clean_tags=())
+    article = ArticleFinder(html=html, skip_tags=[], clean_tags=[], init_clean=True)
     print(article.find())
     print(article.dct)
