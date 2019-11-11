@@ -22,7 +22,7 @@ class ArticleFinder(Finder):
     `skip_tags`     - List -tags to be skipped while counting the symbols inside the tags in the whole HTML\n
     `clean_tags`    - List - tags to be cleaned as a final filter (as an argument in Cleaner())\n
     `only_body`     - Boolean - True if you want to only get the BODY; default value - False\n
-    `anchor_text`   - Boolean - False if you want to get the text WITH the anchor tag; default value - True
+    `anchor_text`   - Boolean - False if you want to get the text WITH the anchor tag; default value - True\n
     `init_clean`    - Boolean - False for when you don't want to use the Cleaner before the Finder; default value - True
     '''
 
@@ -165,13 +165,38 @@ class BodyFinder(BodyTagFinder):
         Returns a string of the closest parent tag that has the whole body of the article
         '''
 
+        article_tag = self.__find_best_parent()
+
+        # Searching for siblings of the already found article_tag.
+        # If the upper siblings of the article tags have the tag with the most symbols
+        # and he has the most symbols in the scope of the previously refered sibling
+        # the article_tag becomes the parent tag of all of them. 
+        try:
+
+            if article_tag.previous_sibling.previous_sibling:
+                prev_sibl_children_dct = self.__get_child_symbs_dct(article_tag.previous_sibling.previous_sibling)
+
+                if self.tag in prev_sibl_children_dct.keys():
+
+                    if prev_sibl_children_dct[self.tag] == max(prev_sibl_children_dct.values()):
+                        article_tag = article_tag.previous_sibling.parent
+ 
+        # For when article_tag.previous_sibling is NoneType
+        except (AttributeError, TypeError):
+            pass
+
+        body_string = f"{str(article_tag)}"
+
+        return body_string
+
+    def __find_best_parent(self):
+
         max_len = 0;
         article_tag = ""
 
         curr_max = 0
 
         for tag in self.soup.find_all(self.tag):
-
             curr_dct = self.__get_child_symbs_dct(tag.parent)
 
             if curr_dct[tag.name] == max(curr_dct.values()):
@@ -179,26 +204,7 @@ class BodyFinder(BodyTagFinder):
                     curr_max = curr_dct[tag.name]
                     article_tag = tag.parent
 
-        top_body = ""
-
-        # Getting the part of the article body that is 
-        # at the top of the normal one, if it exists
-        try:
-            if article_tag.previous_sibling.split():
-                prev_sibl_children_dct = self.__get_child_symbs_dct(article_tag.previous_sibling)
-                
-                if self.tag in prev_sibl_children_dct.keys():
-
-                    if prev_sibl_children_dct[self.tag] == max(prev_sibl_children_dct.values()):
-                        top_body = str(article_tag.previous_sibling)
-        
-        # For when article_tag.previous_sibling is NoneType
-        except (AttributeError, TypeError):
-            pass
-
-        body_string = f"{top_body}{str(article_tag)}"
-
-        return body_string
+        return article_tag
 
 
     def __get_tags(self, parent_soup):
@@ -218,7 +224,7 @@ class BodyFinder(BodyTagFinder):
         '''
         Returns a dictionary - child of `parent_soup` => symbols
 
-        Surrounding whitespace is not counter as symbols.
+        Surrounding whitespace is not counted as symbols.
         '''
 
         tags = self.__get_tags(parent_soup)
@@ -245,11 +251,11 @@ class BodyFinder(BodyTagFinder):
 
 if __name__ == "__main__":
 
-    url = 'http://www.portalspozywczy.pl/owoce-warzywa/wiadomosci/michal-czerwinski-prezes-purella-superfoods-zaprasza-na-frsih-2019-wideo,176813.html'
+    url = 'https://www.infomoney.com.br/consumo/xiaomi-lanca-linha-redmi-note-8-e-mais-150-produtos-no-brasil-smartphones-tem-promocao-agressiva-na-estreia/'
 
     resp = req.get(url)
     html = resp.text
 
-    article = ArticleFinder(html=html, skip_tags=['h3'], clean_tags=[], init_clean=True)
+    article = ArticleFinder(html=html, skip_tags=[], clean_tags=[], init_clean=True)
     print(article.find())
     print(article.dct)
