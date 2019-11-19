@@ -90,7 +90,6 @@ class ArticleFinder(Finder):
         self.article = cleaner.clean(additional_tags=clean_tags)
 
 
-
 class TitleFinder(Finder):
 
     def __init__(self, html):
@@ -114,25 +113,10 @@ class TitleFinder(Finder):
                 # Finding the <meta> tag containing the title
                 meta_found = soup.find(meta_tag, property=property)
 
-                # Getting the matches of the title in the whole html
-                matches = re.findall(meta_found[content], self.html)
             # If the title is not in a <meta> tag with the property='og:title'
             except TypeError:
                 meta_found = soup.find(title)
                 return f'<h1 class="auto-title">{meta_found.text}</h1>'
-
-            # Removing all matches that are greater or equal to the title in <meta>
-            for match in matches:
-                if len(match) >= len(meta_found[content]):
-                    matches.remove(match)
-            
-            # If the matches list is NOT empty, return the title with the most symbols
-            if len(matches):
-                title = max(matches)
-                title = title.strip()
-                title = f'<h1 class="auto-title">{title}</h1>'
-
-                return title
             
             # Else - return the title from the <meta> tag 
             return f'<h1 class="auto-title">{meta_found[content]}</h1'
@@ -141,7 +125,6 @@ class TitleFinder(Finder):
             print("This website doesn't have the title in the meta tags.")
 
         return None
-
 
 
 class BodyFinder(BodyTagFinder):
@@ -190,6 +173,13 @@ class BodyFinder(BodyTagFinder):
         return body_string
 
     def __find_best_parent(self):
+        '''
+        Finds the parent tag that has the tag with the most symbols `self.tag`,
+        while also `self.tag` is having the most symbols within the scope of the parent tag.
+
+        This loops through the whole html, while it finds the `self.tag` with maximum symbols, overall.
+        Returns the parent tag.
+        '''
 
         max_len = 0;
         article_tag = ""
@@ -251,7 +241,7 @@ class BodyFinder(BodyTagFinder):
 
 if __name__ == "__main__":
 
-    url = 'https://www.infomoney.com.br/consumo/xiaomi-lanca-linha-redmi-note-8-e-mais-150-produtos-no-brasil-smartphones-tem-promocao-agressiva-na-estreia/'
+    url = 'https://eldeber.com.bo/156790_remesas-del-exterior-bajan-a-us-883-millones-a-agosto'
 
     resp = req.get(url)
     html = resp.text

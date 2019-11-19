@@ -26,6 +26,7 @@ FORMATTING_TAGS = (
         'ins',
         'sub',
         'sup',
+        'u',
 )
 
 DF_REM_TAGS = [

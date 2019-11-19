@@ -22,7 +22,6 @@ class BodyTagFinder(TagSymbFinder):
     def __init__(self, html, formatting_tags_to_skip=None, skip_tags=[]):
 
         super().__init__(html)
-        self.src = html
         self.skip_tags = skip_tags
 
         self.dct = self.get_tags_counter(formatting_tags_to_skip)

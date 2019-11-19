@@ -16,7 +16,7 @@ from meta_modules.constants import FORMATTING_TAGS
 class Finder:
     '''
     Base class, from which all Finder SubClasses inherit
-    having an HTML attribute
+    having an `html` attribute and a `find()` method
     '''
 
     def __init__(self, html):
@@ -61,7 +61,7 @@ class TagSymbFinder(Finder):
         '''
         Returns a Dictionary with key:value - tag:symbols
 
-        Goes over all tags in the HTML, then using __single_tag_counter(),
+        Goes over all tags in the HTML, then using `__single_tag_counter()`,
         counts the Symbols inside each one of them.
         E.g. if the symbols in ALL <a> tags are 21,
         the dictionary will have: a => 21
