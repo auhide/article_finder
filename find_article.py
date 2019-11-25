@@ -227,10 +227,10 @@ class BodyFinder(BodyTagFinder):
 
             for curr_tag in curr_tags:
                 try:
-                    curr_string = curr_tag.string.strip()
+                    curr_string = curr_tag.text.strip()
                     symb_count += len(curr_string)
 
-                except (AttributeError, TypeError):
+                except(AttributeError, TypeError):
                     pass
 
             child_symbs_dct[tag] = symb_count
@@ -241,7 +241,7 @@ class BodyFinder(BodyTagFinder):
 
 if __name__ == "__main__":
 
-    url = 'https://eldeber.com.bo/156790_remesas-del-exterior-bajan-a-us-883-millones-a-agosto'
+    url = 'https://www.eldeber.com.bo/157066_el-precio-del-combustible-no-debe-subir-ni-un-centavo-hay-produccion'
 
     resp = req.get(url)
     html = resp.text
