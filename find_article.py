@@ -119,7 +119,7 @@ class TitleFinder(Finder):
                 return f'<h1 class="auto-title">{meta_found.text}</h1>'
             
             # Else - return the title from the <meta> tag 
-            return f'<h1 class="auto-title">{meta_found[content]}</h1'
+            return f'<h1 class="auto-title">{meta_found[content]}</h1>'
 
         except TypeError:
             print("This website doesn't have the title in the meta tags.")
@@ -138,7 +138,7 @@ class BodyFinder(BodyTagFinder):
     def __init__(self, html, formatting_tags_to_skip=None, skip_tags=[]):
         super().__init__(html, formatting_tags_to_skip, skip_tags)
         self.tag = self.find_body_tag()
-        print("TAG:::", self.tag)
+        print(f"TAG::: {self.tag}\n\n")
 
         self.soup = BeautifulSoup(html, PARSER)
 
@@ -241,11 +241,11 @@ class BodyFinder(BodyTagFinder):
 
 if __name__ == "__main__":
 
-    url = 'https://www.eldeber.com.bo/157066_el-precio-del-combustible-no-debe-subir-ni-un-centavo-hay-produccion'
+    url = 'https://www.campograndenews.com.br/economia/petrobras-anuncia-fracasso-na-venda-de-usina-de-fertilizantes-em-ms'
 
     resp = req.get(url)
     html = resp.text
 
     article = ArticleFinder(html=html, skip_tags=[], clean_tags=[], init_clean=True)
     print(article.find())
-    print(article.dct)
+    print(f"\n\nDictionary::: {article.dct}")
