@@ -2,8 +2,9 @@
 Module that finds the article TITLE and BODY
 '''
 
-import requests as req
+import datetime
 import re
+import requests as req
 from bs4 import BeautifulSoup
 
 from meta_modules.tag_symb_finder import Finder
@@ -11,7 +12,6 @@ from meta_modules.find_body_tag import BodyTagFinder
 
 from meta_modules.cleaner import Cleaner
 from meta_modules.constants import PARSER
-
 
 
 class ArticleFinder(Finder):
@@ -30,7 +30,7 @@ class ArticleFinder(Finder):
         super().__init__(html)
 
         self.skip_tags = skip_tags
-        self.dct = None
+        self.symbols_dct = None
         self.only_body = only_body
         self.clean_tags = clean_tags
         self.anchor_text = anchor_text
@@ -44,31 +44,40 @@ class ArticleFinder(Finder):
         Finds the full article, with either its TITLE and BODY
         or only BODY.
         '''
+        self.dct = {}
 
+        # Getting the TITLE
         title = TitleFinder(self.html).find()
+        
+        # Getting the DATE
+        date = DateFinder(self.html).find()
 
         # Initial use of the Cleaner
         if self.init_clean:
             cleaner = Cleaner(self.html)
             self.html = str(cleaner.clean())
 
+        # Getting the BODY
         body_finder = BodyFinder(html=self.html, skip_tags=self.skip_tags)
         body = body_finder.find()
-        
-        self.dct = body_finder.get_tags_dct()
+
+
+        self.symbols_dct = body_finder.get_tags_dct()
 
         try:
             if self.only_body or not title:
-                self.article = body
+                self.dct['body'] = body
+                self.dct['date'] = date
                 self.__clean_article(clean_tags=self.clean_tags)
 
-                return self.article
+                return self.dct
 
-            article = title + body
-            self.article = article
+            self.dct['title'] = title
+            self.dct['body'] = body
+            self.dct['date'] = date
             self.__clean_article(clean_tags=self.clean_tags)
 
-            return self.article
+            return self.dct
 
         except TypeError:
             return "Article BODY or TITLE wasn't found"
@@ -82,12 +91,57 @@ class ArticleFinder(Finder):
 
         # Removing the <a> tag, but leaving out the text in it
         if self.anchor_text:
-            self.article = re.sub(pattern='(?:<a[^<]+>)|(?:<\s*\/a\s*>)',
+            self.dct['body'] = re.sub(pattern='(?:<a[^<]+>)|(?:<\s*\/a\s*>)',
                                   repl='',
-                                  string=self.article)
+                                  string=self.dct['body'])
 
-        cleaner = Cleaner(self.article)
-        self.article = cleaner.clean(additional_tags=clean_tags)
+        self.dct['body'] = re.sub(pattern='\n',
+                                  repl='',
+                                  string=self.dct['body'])
+
+        cleaner = Cleaner(self.dct['body'])
+        self.dct['body'] = str(cleaner.clean(additional_tags=clean_tags))
+
+
+class DateFinder(Finder):
+
+    def __init__(self, html):
+        super().__init__(html)
+
+
+    def __re_search(self, pttrn):
+        date = None
+        match = re.search(pattern=pttrn,
+                          string=self.html)
+
+        if match:
+            date = match.group(1)
+
+        return date
+
+
+    def find(self):
+        date = None
+
+        # Checking in the <meta> tags
+        date = self.__re_search(r'[\'\"][^\'\"]+published_time[\'\"][^>]*content\s*=\s*[\'\"](.+?)[\'\"]')
+        if date:
+            return date
+
+        # Checking in the <script> tags
+        date = self.__re_search(r'[\'\"]datePublished[\'\"]:[\'\"](.+?)[\'\"]')
+        if date:
+            return date
+
+        # Checking in the whole of the source code
+        now = datetime.datetime.now()
+        current_year = now.year
+        date_pattern = f'((?:{current_year}[\-:\/]\d{{1,2}}[\-\/]\d{{1,2}})|(?:\d{{2}}[\-:\/]\d{{2}}[\-\/]{current_year}))'
+
+        date = self.__re_search(date_pattern)
+
+        return date
+
 
 
 class TitleFinder(Finder):
@@ -174,10 +228,9 @@ class BodyFinder(BodyTagFinder):
 
     def __find_best_parent(self):
         '''
-        Finds the parent tag that has the tag with the most symbols `self.tag`,
-        while also `self.tag` is having the most symbols within the scope of the parent tag.
+        Find sthe the `self.tag` that is having the most symbols within the scope of the parent tag.
 
-        This loops through the whole html, while it finds the `self.tag` with maximum symbols, overall.
+        This loops through the whole html, it finds the `self.tag` with maximum symbols, overall.
         Returns the parent tag.
         '''
 
@@ -241,11 +294,13 @@ class BodyFinder(BodyTagFinder):
 
 if __name__ == "__main__":
 
-    url = 'https://www.campograndenews.com.br/economia/petrobras-anuncia-fracasso-na-venda-de-usina-de-fertilizantes-em-ms'
+    url = 'https://www.verkkouutiset.fi/onko-antti-rinne-lopulta-omistajaohjausministeri/'
 
     resp = req.get(url)
     html = resp.text
 
-    article = ArticleFinder(html=html, skip_tags=[], clean_tags=[], init_clean=True)
-    print(article.find())
-    print(f"\n\nDictionary::: {article.dct}")
+    article = ArticleFinder(html=html, skip_tags=[], clean_tags=[], init_clean=False)
+    dct = article.find()
+    
+    print(dct)
+    print(f"\n\nDictionary::: {article.symbols_dct}")
