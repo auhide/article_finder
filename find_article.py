@@ -160,23 +160,23 @@ class TitleFinder(Finder):
         property = 'og:title'
         content = 'content'
 
-        try:
-            soup = BeautifulSoup(self.html, PARSER)
 
+        soup = BeautifulSoup(self.html, PARSER)
+
+        try:
             try:
                 # Finding the <meta> tag containing the title
                 meta_found = soup.find(meta_tag, property=property)
+                # Return the title from the <meta> tag 
+                return f'<h1 class="auto-title">{meta_found[content]}</h1>'
 
             # If the title is not in a <meta> tag with the property='og:title'
             except TypeError:
                 meta_found = soup.find(title)
                 return f'<h1 class="auto-title">{meta_found.text}</h1>'
-            
-            # Else - return the title from the <meta> tag 
-            return f'<h1 class="auto-title">{meta_found[content]}</h1>'
-
         except TypeError:
-            print("This website doesn't have the title in the meta tags.")
+            print("The title has not been found!")
+
 
         return None
 
@@ -294,7 +294,7 @@ class BodyFinder(BodyTagFinder):
 
 if __name__ == "__main__":
 
-    url = 'https://www.verkkouutiset.fi/onko-antti-rinne-lopulta-omistajaohjausministeri/'
+    url = 'https://enet.hu/hirek/53-millio-okostelefon-hasznalo-hazankban/'
 
     resp = req.get(url)
     html = resp.text
