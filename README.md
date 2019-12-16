@@ -13,10 +13,17 @@ pip install -r requirements.txt
 ```python
 from find_article import ArticleFinder
 
-article_finder = ArticleFinder(html=your_html)
-article = article_finder.find()
- 
-print(article)
+article_finder = ArticleFinder(html=src, 
+                               skip_tags=[], 
+                               clean_tags=[],
+                               anchor_text=True, 
+                               init_clean=True)
+dct = article_finder.find()
+title = dct['title']
+body = dct['body']
+date = dct['date']
+
+print(f"TITLE: {title}\n\nBODY: {body}\n\nDATE: {date}");
 ```
 
 Parameters:
