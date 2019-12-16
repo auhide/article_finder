@@ -21,7 +21,6 @@ class ArticleFinder(Finder):
     `html`          - String - the HTML source code\n
     `skip_tags`     - List -tags to be skipped while counting the symbols inside the tags in the whole HTML\n
     `clean_tags`    - List - tags to be cleaned as a final filter (as an argument in Cleaner())\n
-    `only_body`     - Boolean - True if you want to only get the BODY; default value - False\n
     `anchor_text`   - Boolean - False if you want to get the text WITH the anchor tag; default value - True\n
     `init_clean`    - Boolean - False for when you don't want to use the Cleaner before the Finder; default value - True
     '''
@@ -31,7 +30,6 @@ class ArticleFinder(Finder):
 
         self.skip_tags = skip_tags
         self.symbols_dct = None
-        self.only_body = only_body
         self.clean_tags = clean_tags
         self.anchor_text = anchor_text
         self.init_clean = init_clean
@@ -39,10 +37,10 @@ class ArticleFinder(Finder):
 
     def find(self):
         '''
-        Returns a string.
+        Returns a dictionary.
 
-        Finds the full article, with either its TITLE and BODY
-        or only BODY.
+        Finds the full article, with its TITLE, BODY and the TIME
+        of it being published.
         '''
         self.dct = {}
 
@@ -65,13 +63,6 @@ class ArticleFinder(Finder):
         self.symbols_dct = body_finder.get_tags_dct()
 
         try:
-            if self.only_body or not title:
-                self.dct['body'] = body
-                self.dct['date'] = date
-                self.__clean_article(clean_tags=self.clean_tags)
-
-                return self.dct
-
             self.dct['title'] = title
             self.dct['body'] = body
             self.dct['date'] = date
@@ -294,7 +285,7 @@ class BodyFinder(BodyTagFinder):
 
 if __name__ == "__main__":
 
-    url = 'https://enet.hu/hirek/53-millio-okostelefon-hasznalo-hazankban/'
+    url = 'https://www.campograndenews.com.br/economia/petrobras-anuncia-fracasso-na-venda-de-usina-de-fertilizantes-em-ms'
 
     resp = req.get(url)
     html = resp.text
