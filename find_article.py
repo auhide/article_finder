@@ -290,8 +290,14 @@ if __name__ == "__main__":
     resp = req.get(url)
     html = resp.text
 
-    article = ArticleFinder(html=html, skip_tags=[], clean_tags=[], init_clean=False)
-    dct = article.find()
-    
-    print(dct)
-    print(f"\n\nDictionary::: {article.symbols_dct}")
+    article_finder = ArticleFinder(html=html, 
+                               skip_tags=[], 
+                               clean_tags=[],
+                               anchor_text=True, 
+                               init_clean=True)
+    dct = article_finder.find()
+    title = dct['title']
+    body = dct['body']
+    date = dct['date']
+
+    print(f"TITLE: {title}\n\nBODY: {body}\n\nDATE: {date}");
