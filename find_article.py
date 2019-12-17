@@ -291,10 +291,10 @@ if __name__ == "__main__":
     html = resp.text
 
     article_finder = ArticleFinder(html=html, 
-                               skip_tags=[], 
-                               clean_tags=[],
-                               anchor_text=True, 
-                               init_clean=True)
+                                   skip_tags=[], 
+                                   clean_tags=[],
+                                   anchor_text=True, 
+                                   init_clean=True)
     dct = article_finder.find()
     title = dct['title']
     body = dct['body']
