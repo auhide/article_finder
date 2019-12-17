@@ -300,4 +300,4 @@ if __name__ == "__main__":
     body = dct['body']
     date = dct['date']
 
-    print(f"TITLE: {title}\n\nBODY: {body}\n\nDATE: {date}");
+    print(f"TITLE: {title}\n\nBODY: {body}\n\nDATE: {date}")
